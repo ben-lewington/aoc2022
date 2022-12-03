@@ -1,13 +1,14 @@
 use anyhow::Result;
-use aoc2022::{read_day_data, RpsScenario, RpsSelection, RpsOutcome};
+use aoc2022::day2::*;
+use aoc2022::read_day_data;
 
 fn main() -> Result<()> {
     // Day 2
     let contents = read_day_data(2)?;
 
+    // 2.1
     let opponent_decoder = RpsSelection::decoder('A', 'B', 'C');
     let player_decoder = RpsSelection::decoder('X', 'Y', 'Z');
-
     let c = &contents
         .split("\r\n")
         .filter(|x| x.len() == 3)
@@ -21,8 +22,8 @@ fn main() -> Result<()> {
 
     println!("Day 2, Answer 1: {:?}", c);
 
+    // 2.2
     let outcome_decoder = RpsOutcome::decoder('X', 'Y', 'Z');
-
     let c = &contents
         .split("\r\n")
         .filter(|x| x.len() == 3)
