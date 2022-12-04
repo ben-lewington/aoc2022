@@ -1,21 +1,21 @@
 use anyhow::{bail, Result};
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub enum RpsSelection {
+pub enum RpsMove {
     Rock,
     Paper,
     Scissors,
 }
 
-impl RpsSelection {
-    pub fn decoder(r: char, p: char, s: char) -> impl Fn(char) -> Result<RpsSelection> {
-        move |x| {
-            return if x == r {
-                Ok(RpsSelection::Rock)
-            } else if x == p {
-                Ok(RpsSelection::Paper)
-            } else if x == s {
-                Ok(RpsSelection::Scissors)
+impl RpsMove {
+    pub fn parser(rock: char, paper: char, scissors: char) -> impl Fn(char) -> Result<RpsMove> {
+        move |input| {
+            return if input == rock {
+                Ok(RpsMove::Rock)
+            } else if input == paper {
+                Ok(RpsMove::Paper)
+            } else if input == scissors {
+                Ok(RpsMove::Scissors)
             } else {
                 bail!("not a valid input")
             };
@@ -39,13 +39,13 @@ pub enum RpsOutcome {
 }
 
 impl RpsOutcome {
-    pub fn decoder(l: char, d: char, w: char) -> impl Fn(char) -> Result<RpsOutcome> {
-        move |x| {
-            return if x == l {
+    pub fn parser(lose: char, draw: char, win: char) -> impl Fn(char) -> Result<RpsOutcome> {
+        move |input| {
+            return if input == lose {
                 Ok(RpsOutcome::Lose)
-            } else if x == d {
+            } else if input == draw {
                 Ok(RpsOutcome::Draw)
-            } else if x == w {
+            } else if input == win {
                 Ok(RpsOutcome::Win)
             } else {
                 bail!("not a valid input")
@@ -64,72 +64,66 @@ impl RpsOutcome {
 
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub enum RpsScenario {
-    Move {
-        opponent: RpsSelection,
-        player: RpsSelection,
+    MovePair {
+        opponent: RpsMove,
+        player: RpsMove,
     },
-    Given {
-        opponent: RpsSelection,
+    MoveOutcome {
+        opponent: RpsMove,
         outcome: RpsOutcome,
     },
 }
 
 impl RpsScenario {
-    pub fn new_with_move(opponent: RpsSelection, player: RpsSelection) -> Self {
-        Self::Move { opponent, player }
+    pub fn with_move_pair(opponent: RpsMove, player: RpsMove) -> Self {
+        Self::MovePair { opponent, player }
     }
 
-    pub fn new_with_outcome(opponent: RpsSelection, outcome: RpsOutcome) -> Self {
-        Self::Given { opponent, outcome }
+    pub fn with_move_outcome(opponent: RpsMove, outcome: RpsOutcome) -> Self {
+        Self::MoveOutcome { opponent, outcome }
     }
 
-    pub fn resolve(&self) -> (RpsSelection, RpsOutcome) {
+    pub fn resolve(&self) -> (RpsMove, RpsOutcome) {
         match self {
-            &Self::Move {
-                opponent: o,
-                player: p,
-            } => {
-                let outcome = match p {
-                    RpsSelection::Rock => match o {
-                        RpsSelection::Rock => RpsOutcome::Draw,
-                        RpsSelection::Paper => RpsOutcome::Lose,
-                        RpsSelection::Scissors => RpsOutcome::Win,
+            &Self::MovePair { opponent, player } => {
+                let outcome = match player {
+                    RpsMove::Rock => match opponent {
+                        RpsMove::Rock => RpsOutcome::Draw,
+                        RpsMove::Paper => RpsOutcome::Lose,
+                        RpsMove::Scissors => RpsOutcome::Win,
                     },
-                    RpsSelection::Paper => match o {
-                        RpsSelection::Rock => RpsOutcome::Win,
-                        RpsSelection::Paper => RpsOutcome::Draw,
-                        RpsSelection::Scissors => RpsOutcome::Lose,
+                    RpsMove::Paper => match opponent {
+                        RpsMove::Rock => RpsOutcome::Win,
+                        RpsMove::Paper => RpsOutcome::Draw,
+                        RpsMove::Scissors => RpsOutcome::Lose,
                     },
-                    RpsSelection::Scissors => match o {
-                        RpsSelection::Rock => RpsOutcome::Lose,
-                        RpsSelection::Paper => RpsOutcome::Win,
-                        RpsSelection::Scissors => RpsOutcome::Draw,
+                    RpsMove::Scissors => match opponent {
+                        RpsMove::Rock => RpsOutcome::Lose,
+                        RpsMove::Paper => RpsOutcome::Win,
+                        RpsMove::Scissors => RpsOutcome::Draw,
                     },
                 };
-                (p, outcome)
+                (player, outcome)
             }
-            &Self::Given {
-                opponent: opp,
-                outcome: out,
-            } => {
-                let player = match out {
-                    RpsOutcome::Win => match opp {
-                        RpsSelection::Rock => RpsSelection::Paper,
-                        RpsSelection::Paper => RpsSelection::Scissors,
-                        RpsSelection::Scissors => RpsSelection::Rock,
+            &Self::MoveOutcome { opponent, outcome } => {
+                let player = match outcome {
+                    RpsOutcome::Win => match opponent {
+                        RpsMove::Rock => RpsMove::Paper,
+                        RpsMove::Paper => RpsMove::Scissors,
+                        RpsMove::Scissors => RpsMove::Rock,
                     },
-                    RpsOutcome::Draw => match opp {
-                        RpsSelection::Rock => RpsSelection::Rock,
-                        RpsSelection::Paper => RpsSelection::Paper,
-                        RpsSelection::Scissors => RpsSelection::Scissors,
+                    RpsOutcome::Draw => match opponent {
+                        RpsMove::Rock => RpsMove::Rock,
+                        RpsMove::Paper => RpsMove::Paper,
+                        RpsMove::Scissors => RpsMove::Scissors,
                     },
-                    RpsOutcome::Lose => match opp {
-                        RpsSelection::Rock => RpsSelection::Scissors,
-                        RpsSelection::Paper => RpsSelection::Rock,
-                        RpsSelection::Scissors => RpsSelection::Paper,
+                    RpsOutcome::Lose => match opponent {
+                        RpsMove::Rock => RpsMove::Scissors,
+                        RpsMove::Paper => RpsMove::Rock,
+                        RpsMove::Scissors => RpsMove::Paper,
                     },
                 };
-                (player, out)
+                (player, outcome)
             }
         }
     }

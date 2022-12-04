@@ -21,6 +21,7 @@ fn main() -> Result<()> {
 
     println!("Day 3, Answer 1: {}", c);
 
+    // 3.2
     let mut c = contents.split("\r\n");
     let mut p: Vec<usize> = vec![];
     while let Some(s1) = c.next() {
