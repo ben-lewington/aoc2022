@@ -9,7 +9,7 @@ fn main() -> Result<()> {
     // 5.1
     let mut cs = CrateStack::new();
 
-    let _ = contents
+    let _ = &contents
         .split("\r\n")
         .filter(|s| s.len() > 0)
         .map(|x| {
@@ -38,7 +38,7 @@ fn main() -> Result<()> {
 
     let mut cs = CrateStack::new();
 
-    let _ = contents
+    let _ = &contents
         .split("\r\n")
         .filter(|s| s.len() > 0)
         .map(|x| {

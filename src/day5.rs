@@ -42,17 +42,15 @@ impl CrateStack {
     }
 
     pub fn move_crates_in_bulk(&mut self, multiplicity: usize, index_from: usize, index_to: usize) {
-        let stack_from = self.0.get_mut(index_from - 1).unwrap();
-
         let mut v: Vec<char> = vec![];
 
+        let stack_from = self.0.get_mut(index_from - 1).unwrap();
         for _ in 1..=multiplicity {
             let x = stack_from.pop().unwrap();
             v.push(x);
         }
 
         let stack_to = self.0.get_mut(index_to - 1).unwrap();
-
         for _ in 1..=multiplicity {
             let x = v.pop().unwrap();
 
