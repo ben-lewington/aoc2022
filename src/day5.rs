@@ -38,9 +38,6 @@ impl CrateStack {
     pub fn move_crates(&mut self, multiplicity: usize, index_from: usize, index_to: usize) {
         for _ in 1..=multiplicity {
             self.move_crate(index_from, index_to);
-            // for (i, x) in self.0.iter().enumerate() {
-            //     println!("{}: {:?}", i, x);
-            // }
         }
     }
 
