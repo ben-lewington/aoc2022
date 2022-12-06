@@ -53,7 +53,6 @@ impl CrateStack {
         let stack_to = self.0.get_mut(index_to - 1).unwrap();
         for _ in 1..=multiplicity {
             let x = v.pop().unwrap();
-
             stack_to.push(x);
         }
     }
