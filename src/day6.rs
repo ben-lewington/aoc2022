@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 
 pub fn first_distinct_subword(c: &str, l: usize) -> Result<usize> {
     for i in 1..=c.len() {
@@ -16,5 +16,5 @@ pub fn first_distinct_subword(c: &str, l: usize) -> Result<usize> {
             }
         }
     }
-    Err(anyhow!("didn't find anything"))
+    bail!("didn't find anything")
 }
