@@ -1,6 +1,6 @@
 use anyhow::Result;
-use aoc2022::*;
 use aoc2022::day6::*;
+use aoc2022::*;
 
 fn main() -> Result<()> {
     // Day 6
